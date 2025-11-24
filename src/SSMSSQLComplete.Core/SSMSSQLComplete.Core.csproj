@@ -73,6 +73,7 @@
     <Compile Include="Refactoring\QualifyIdentifiersRefactoring.cs" />
     <Compile Include="Refactoring\RefactoringEngine.cs" />
     <Compile Include="Refactoring\RenameAliasRefactoring.cs" />
+    <Compile Include="Results\ResultsCaptureService.cs" />
     <Compile Include="Schema\ColumnMetadata.cs" />
     <Compile Include="Schema\DatabaseMetadata.cs" />
     <Compile Include="Schema\ForeignKeyMetadata.cs" />
