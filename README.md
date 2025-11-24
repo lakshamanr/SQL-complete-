@@ -14,9 +14,10 @@ Advanced SQL code completion, formatting, and refactoring add-in for Microsoft S
 - **Enhanced Results Viewer**: View query results with automatic JSON/XML detection and formatting
 
 ### Supported SSMS Versions
-- SSMS 2017
+- SSMS 2017 (17.x)
 - SSMS 18.x
 - SSMS 19.x
+- SSMS 20.x / SSMS 22 (latest)
 
 ## Architecture
 
