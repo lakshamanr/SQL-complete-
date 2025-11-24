@@ -11,6 +11,7 @@ Advanced SQL code completion, formatting, and refactoring add-in for Microsoft S
 - **Code Snippets**: Manage and insert reusable SQL code templates
 - **Quick Info Tooltips**: Display column types, constraints, nullability, and relationships
 - **Basic Refactorings**: Expand SELECT *, rename aliases, qualify identifiers
+- **Enhanced Results Viewer**: View query results with automatic JSON/XML detection and formatting
 
 ### Supported SSMS Versions
 - SSMS 2017
@@ -25,8 +26,9 @@ The add-in consists of several core components:
 2. **Schema Service**: Caches database metadata for fast lookups
 3. **Formatting Engine**: Parses and formats T-SQL code
 4. **Snippet Manager**: Manages code templates and snippets
-5. **Configuration System**: User settings and preferences
-6. **Telemetry & Logging**: Optional usage analytics and error logging
+5. **Results Viewer**: Enhanced results display with JSON/XML formatting
+6. **Configuration System**: User settings and preferences
+7. **Telemetry & Logging**: Optional usage analytics and error logging
 
 ## Project Structure
 
@@ -45,6 +47,7 @@ SSMSSQLComplete/
 │       ├── Formatting/            # SQL formatter
 │       ├── Snippets/              # Snippet management
 │       ├── Refactoring/           # Refactoring tools
+│       ├── Results/               # Results viewer service
 │       └── Config/                # Configuration
 └── tests/
     └── SSMSSQLComplete.Tests/     # Unit and integration tests
@@ -110,6 +113,20 @@ Access settings via: **Tools → Options → SSMS SQL Complete**
   - Qualify/Unqualify identifiers
   - Rename alias
   - Extract to CTE
+
+### Enhanced Results Viewer
+- Access via **Tools → SSMS SQL Complete → Show Enhanced Results Viewer**
+- **Features**:
+  - **Automatic JSON Detection**: Columns containing JSON are automatically detected and highlighted
+  - **JSON Formatting**: Click on any JSON cell to see beautifully formatted JSON in the detail panel
+  - **XML Support**: XML data is also detected and formatted
+  - **Split View**: Top panel shows the grid, bottom panel shows formatted details
+  - **Visual Indicators**: JSON columns are marked with 📄 icon and blue text
+  - **Color Coding**:
+    - Yellow background = JSON data
+    - Green background = XML data
+    - Gray text = NULL values
+  - **Smart Truncation**: Long values are truncated in the grid but fully visible in detail view
 
 ## Development
 

@@ -29,6 +29,7 @@ namespace SSMSSQLComplete.Package
             await FormatSelectionCommand.InitializeAsync(this);
             await ManageSnippetsCommand.InitializeAsync(this);
             await ToggleCompletionCommand.InitializeAsync(this);
+            await ShowResultsViewerCommand.InitializeAsync(this);
 
             // Initialize services
             await InitializeServicesAsync();

@@ -38,6 +38,13 @@
           <ButtonText>Toggle Completion</ButtonText>
         </Strings>
       </Button>
+
+      <Button guid="guidSSMSSQLCompleteCommandSet" id="ShowResultsViewerCommandId" priority="0x0104" type="Button">
+        <Parent guid="guidSSMSSQLCompleteCommandSet" id="SSMSSQLCompleteMenuGroup" />
+        <Strings>
+          <ButtonText>Show Enhanced Results Viewer</ButtonText>
+        </Strings>
+      </Button>
     </Buttons>
   </Commands>
 
@@ -50,6 +57,7 @@
       <IDSymbol name="FormatSelectionCommandId" value="0x0101" />
       <IDSymbol name="ManageSnippetsCommandId" value="0x0102" />
       <IDSymbol name="ToggleCompletionCommandId" value="0x0103" />
+      <IDSymbol name="ShowResultsViewerCommandId" value="0x0104" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>
