@@ -8,13 +8,14 @@ using SSMSSQLComplete.Core.Infrastructure;
 
 namespace SSMSSQLComplete.Editor
 {
-    internal sealed class SqlCompletionCommandHandler
+    internal sealed class SqlCompletionCommandHandler : IDisposable
     {
         private readonly ITextView _textView;
         private readonly ICompletionBroker _completionBroker;
         private readonly ITextStructureNavigatorSelectorService _navigatorService;
         private ICompletionSession _currentSession;
         private readonly CompletionEngine _completionEngine;
+        private bool _disposed;
 
         public SqlCompletionCommandHandler(
             ITextView textView,
@@ -117,6 +118,36 @@ namespace SSMSSQLComplete.Editor
             {
                 _currentSession.Dismissed -= OnSessionDismissed;
                 _currentSession = null;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            try
+            {
+                // Unsubscribe from events to prevent memory leaks
+                if (_textView != null)
+                {
+                    _textView.TextBuffer.Changed -= OnTextBufferChanged;
+                    _textView.Caret.PositionChanged -= OnCaretPositionChanged;
+                }
+
+                // Dismiss and clean up current session
+                if (_currentSession != null && !_currentSession.IsDismissed)
+                {
+                    _currentSession.Dismissed -= OnSessionDismissed;
+                    _currentSession.Dismiss();
+                    _currentSession = null;
+                }
+
+                _disposed = true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.Error($"Error disposing SqlCompletionCommandHandler: {ex.Message}", ex);
             }
         }
     }

@@ -54,6 +54,7 @@
     <Compile Include="Editor\CompletionController.cs" />
     <Compile Include="Editor\CompletionHandlerProvider.cs" />
     <Compile Include="Editor\SqlCompletionCommandHandler.cs" />
+    <Compile Include="Editor\SqlCompletionSource.cs" />
     <Compile Include="Editor\SqlTextViewCreationListener.cs" />
     <Compile Include="Editor\TextViewListener.cs" />
     <Compile Include="Package\SSMSSQLCompletePackage.cs" />

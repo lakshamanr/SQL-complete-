@@ -55,6 +55,13 @@ namespace SSMSSQLComplete.Editor
             {
                 textView.GotAggregateFocus -= OnTextViewGotFocus;
                 textView.Closed -= OnTextViewClosed;
+
+                // Dispose completion handler to prevent memory leaks
+                if (textView.Properties.TryGetProperty(typeof(SqlCompletionCommandHandler), out SqlCompletionCommandHandler handler))
+                {
+                    handler?.Dispose();
+                    textView.Properties.RemoveProperty(typeof(SqlCompletionCommandHandler));
+                }
             }
         }
 
