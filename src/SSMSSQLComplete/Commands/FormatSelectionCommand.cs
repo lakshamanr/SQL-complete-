@@ -1,0 +1,70 @@
+using System;
+using System.ComponentModel.Design;
+using Microsoft.VisualStudio.Shell;
+using SSMSSQLComplete.Core.Formatting;
+using Task = System.Threading.Tasks.Task;
+
+namespace SSMSSQLComplete.Commands
+{
+    internal sealed class FormatSelectionCommand
+    {
+        public const int CommandId = 0x0101;
+        public static readonly Guid CommandSet = new Guid("A1B2C3D4-E5F6-7890-ABCD-EF1234567890");
+
+        private readonly AsyncPackage _package;
+        private readonly FormattingEngine _formattingEngine;
+
+        private FormatSelectionCommand(AsyncPackage package, OleMenuCommandService commandService)
+        {
+            _package = package ?? throw new ArgumentNullException(nameof(package));
+            commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
+
+            _formattingEngine = new FormattingEngine();
+
+            var menuCommandID = new CommandID(CommandSet, CommandId);
+            var menuItem = new MenuCommand(Execute, menuCommandID);
+            commandService.AddCommand(menuItem);
+        }
+
+        public static FormatSelectionCommand Instance { get; private set; }
+
+        public static async Task InitializeAsync(AsyncPackage package)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+
+            OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
+            Instance = new FormatSelectionCommand(package, commandService);
+        }
+
+        private void Execute(object sender, EventArgs e)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            try
+            {
+                var selectedText = GetSelectedText();
+
+                if (!string.IsNullOrEmpty(selectedText))
+                {
+                    var formatted = _formattingEngine.Format(selectedText);
+                    SetSelectedText(formatted);
+
+                    Core.Infrastructure.TelemetryService.Instance.TrackEvent("FormatSelection");
+                }
+            }
+            catch (Exception ex)
+            {
+                Core.Infrastructure.Logger.Instance.Error($"Error formatting selection: {ex.Message}", ex);
+            }
+        }
+
+        private string GetSelectedText()
+        {
+            return string.Empty;
+        }
+
+        private void SetSelectedText(string text)
+        {
+        }
+    }
+}

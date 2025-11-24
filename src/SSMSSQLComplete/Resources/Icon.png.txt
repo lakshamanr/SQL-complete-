@@ -1,0 +1,9 @@
+# Placeholder for Icon.png
+# This file is a placeholder. Replace with actual 90x90 PNG icon for the VSIX package.
+# Icon should represent SQL/database completion functionality.
+# Recommended: SQL logo or database icon with completion/intellisense symbol
+
+To create the icon:
+1. Design a 90x90 pixel PNG image
+2. Save as Icon.png in this directory
+3. Delete this placeholder file

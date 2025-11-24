@@ -1,0 +1,9 @@
+# Placeholder for Preview.png
+# This file is a placeholder. Replace with actual 200x200 PNG preview image for the VSIX package.
+# Preview should show the extension in action (e.g., completion popup, formatted SQL).
+
+To create the preview:
+1. Take a screenshot of the extension features
+2. Resize to 200x200 pixels
+3. Save as Preview.png in this directory
+4. Delete this placeholder file

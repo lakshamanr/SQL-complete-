@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2F8A6B3C-4D5E-6F7A-8B9C-0D1E2F3A4B5C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SSMSSQLComplete.Core</RootNamespace>
+    <AssemblyName>SSMSSQLComplete.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Completion\CompletionEngine.cs" />
+    <Compile Include="Completion\CompletionItem.cs" />
+    <Compile Include="Completion\CompletionItemKind.cs" />
+    <Compile Include="Completion\CompletionRanker.cs" />
+    <Compile Include="Completion\CompletionTrigger.cs" />
+    <Compile Include="Completion\FuzzyMatcher.cs" />
+    <Compile Include="Completion\ICompletionProvider.cs" />
+    <Compile Include="Completion\KeywordCompletionProvider.cs" />
+    <Compile Include="Completion\SchemaCompletionProvider.cs" />
+    <Compile Include="Config\CompletionSettings.cs" />
+    <Compile Include="Config\FormattingSettings.cs" />
+    <Compile Include="Config\SchemaSettings.cs" />
+    <Compile Include="Config\SettingsManager.cs" />
+    <Compile Include="Config\TelemetrySettings.cs" />
+    <Compile Include="Formatting\FormattingEngine.cs" />
+    <Compile Include="Formatting\FormattingProfile.cs" />
+    <Compile Include="Formatting\FormattingRule.cs" />
+    <Compile Include="Formatting\SqlFormatter.cs" />
+    <Compile Include="Formatting\TSqlFormatterVisitor.cs" />
+    <Compile Include="Infrastructure\AsyncLazy.cs" />
+    <Compile Include="Infrastructure\ConcurrentCache.cs" />
+    <Compile Include="Infrastructure\Logger.cs" />
+    <Compile Include="Infrastructure\PerformanceMonitor.cs" />
+    <Compile Include="Infrastructure\TelemetryService.cs" />
+    <Compile Include="Parsing\SqlContext.cs" />
+    <Compile Include="Parsing\SqlContextAnalyzer.cs" />
+    <Compile Include="Parsing\SqlToken.cs" />
+    <Compile Include="Parsing\SqlTokenizer.cs" />
+    <Compile Include="Parsing\TSqlKeywords.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Refactoring\ExpandSelectStarRefactoring.cs" />
+    <Compile Include="Refactoring\ExtractToCteRefactoring.cs" />
+    <Compile Include="Refactoring\IRefactoring.cs" />
+    <Compile Include="Refactoring\QualifyIdentifiersRefactoring.cs" />
+    <Compile Include="Refactoring\RefactoringEngine.cs" />
+    <Compile Include="Refactoring\RenameAliasRefactoring.cs" />
+    <Compile Include="Schema\ColumnMetadata.cs" />
+    <Compile Include="Schema\DatabaseMetadata.cs" />
+    <Compile Include="Schema\ForeignKeyMetadata.cs" />
+    <Compile Include="Schema\ISchemaProvider.cs" />
+    <Compile Include="Schema\SchemaCache.cs" />
+    <Compile Include="Schema\SchemaFetcher.cs" />
+    <Compile Include="Schema\SchemaService.cs" />
+    <Compile Include="Schema\TableMetadata.cs" />
+    <Compile Include="Snippets\ISnippetProvider.cs" />
+    <Compile Include="Snippets\Snippet.cs" />
+    <Compile Include="Snippets\SnippetExpander.cs" />
+    <Compile Include="Snippets\SnippetManager.cs" />
+    <Compile Include="Snippets\SnippetParameter.cs" />
+    <Compile Include="Snippets\SnippetRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Formatting\Grammar\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

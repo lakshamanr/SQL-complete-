@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable">
+  <Extern href="stdidcmd.h" />
+  <Extern href="vsshlids.h" />
+
+  <Commands package="guidSSMSSQLCompletePackage">
+    <Groups>
+      <Group guid="guidSSMSSQLCompleteCommandSet" id="SSMSSQLCompleteMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
+      </Group>
+    </Groups>
+
+    <Buttons>
+      <Button guid="guidSSMSSQLCompleteCommandSet" id="FormatDocumentCommandId" priority="0x0100" type="Button">
+        <Parent guid="guidSSMSSQLCompleteCommandSet" id="SSMSSQLCompleteMenuGroup" />
+        <Strings>
+          <ButtonText>Format SQL Document</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidSSMSSQLCompleteCommandSet" id="FormatSelectionCommandId" priority="0x0101" type="Button">
+        <Parent guid="guidSSMSSQLCompleteCommandSet" id="SSMSSQLCompleteMenuGroup" />
+        <Strings>
+          <ButtonText>Format SQL Selection</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidSSMSSQLCompleteCommandSet" id="ManageSnippetsCommandId" priority="0x0102" type="Button">
+        <Parent guid="guidSSMSSQLCompleteCommandSet" id="SSMSSQLCompleteMenuGroup" />
+        <Strings>
+          <ButtonText>Manage Snippets...</ButtonText>
+        </Strings>
+      </Button>
+
+      <Button guid="guidSSMSSQLCompleteCommandSet" id="ToggleCompletionCommandId" priority="0x0103" type="Button">
+        <Parent guid="guidSSMSSQLCompleteCommandSet" id="SSMSSQLCompleteMenuGroup" />
+        <Strings>
+          <ButtonText>Toggle Completion</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+
+  <Symbols>
+    <GuidSymbol name="guidSSMSSQLCompletePackage" value="{8C9E5A5B-2E3D-4F1A-9B8C-1D5E6F7A8B9C}" />
+
+    <GuidSymbol name="guidSSMSSQLCompleteCommandSet" value="{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}">
+      <IDSymbol name="SSMSSQLCompleteMenuGroup" value="0x1020" />
+      <IDSymbol name="FormatDocumentCommandId" value="0x0100" />
+      <IDSymbol name="FormatSelectionCommandId" value="0x0101" />
+      <IDSymbol name="ManageSnippetsCommandId" value="0x0102" />
+      <IDSymbol name="ToggleCompletionCommandId" value="0x0103" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>
