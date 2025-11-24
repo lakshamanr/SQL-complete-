@@ -1,6 +1,12 @@
 using System;
 using System.ComponentModel.Design;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.TextManager.Interop;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.Editor;
 using SSMSSQLComplete.Core.Formatting;
 using Task = System.Threading.Tasks.Task;
 
@@ -64,13 +70,70 @@ namespace SSMSSQLComplete.Commands
 
         private string GetCurrentDocumentText()
         {
-            // Placeholder - actual implementation would get text from ITextView
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            try
+            {
+                var textView = GetActiveTextView();
+                if (textView != null)
+                {
+                    return textView.TextSnapshot.GetText();
+                }
+            }
+            catch (Exception ex)
+            {
+                Core.Infrastructure.Logger.Instance.Error($"Error getting document text: {ex.Message}", ex);
+            }
+
             return string.Empty;
         }
 
         private void SetCurrentDocumentText(string text)
         {
-            // Placeholder - actual implementation would set text to ITextView
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            try
+            {
+                var textView = GetActiveTextView();
+                if (textView != null)
+                {
+                    var edit = textView.TextBuffer.CreateEdit();
+                    edit.Replace(0, textView.TextBuffer.CurrentSnapshot.Length, text);
+                    edit.Apply();
+                }
+            }
+            catch (Exception ex)
+            {
+                Core.Infrastructure.Logger.Instance.Error($"Error setting document text: {ex.Message}", ex);
+            }
+        }
+
+        private IWpfTextView GetActiveTextView()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            try
+            {
+                var textManager = ServiceProvider.GetServiceAsync(typeof(SVsTextManager)).Result as IVsTextManager;
+                if (textManager == null)
+                    return null;
+
+                textManager.GetActiveView(1, null, out IVsTextView textView);
+                if (textView == null)
+                    return null;
+
+                var componentModel = ServiceProvider.GetServiceAsync(typeof(SComponentModelHost)).Result as IComponentModelHost;
+                if (componentModel == null)
+                    return null;
+
+                var editorAdapter = componentModel.GetService<IVsEditorAdaptersFactoryService>();
+                return editorAdapter.GetWpfTextView(textView);
+            }
+            catch (Exception ex)
+            {
+                Core.Infrastructure.Logger.Instance.Error($"Error getting active text view: {ex.Message}", ex);
+                return null;
+            }
         }
     }
 }

@@ -11,15 +11,18 @@
     <Tags>SSMS, SQL, IntelliSense, Completion, Formatting, T-SQL, SQL Server</Tags>
   </Metadata>
   <Installation>
-    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[15.0,21.0)">
+    <!-- SSMS 18.x, 19.x, 20.x (SSMS 22) -->
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[15.0,18.0)">
       <ProductArchitecture>amd64</ProductArchitecture>
     </InstallationTarget>
-    <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[15.0,21.0)">
+    <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[15.0,18.0)">
       <ProductArchitecture>amd64</ProductArchitecture>
     </InstallationTarget>
-    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0,21.0)">
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0,18.0)">
       <ProductArchitecture>amd64</ProductArchitecture>
     </InstallationTarget>
+    <!-- Note: SSMS uses the Visual Studio shell infrastructure -->
+    <!-- SSMS 18+ works with VS 2017-2019 shell versions -->
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.7.2,)" />
