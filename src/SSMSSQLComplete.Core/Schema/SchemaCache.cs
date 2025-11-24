@@ -8,6 +8,7 @@ namespace SSMSSQLComplete.Core.Schema
         private readonly ConcurrentDictionary<string, CacheEntry> _cache;
         private readonly TimeSpan _defaultExpiration;
         private readonly int _maxCacheSize;
+        private readonly object _evictionLock = new object();
 
         public SchemaCache(TimeSpan? expiration = null, int maxSize = 10)
         {
@@ -18,20 +19,23 @@ namespace SSMSSQLComplete.Core.Schema
 
         public void Set(string key, DatabaseMetadata metadata)
         {
-            // Enforce cache size limit
-            if (_cache.Count >= _maxCacheSize)
+            // Enforce cache size limit with atomic check-and-evict
+            lock (_evictionLock)
             {
-                EvictOldest();
+                if (_cache.Count >= _maxCacheSize)
+                {
+                    EvictOldest();
+                }
+
+                var entry = new CacheEntry
+                {
+                    Metadata = metadata,
+                    Timestamp = DateTime.UtcNow,
+                    Expiration = _defaultExpiration
+                };
+
+                _cache.AddOrUpdate(key, entry, (k, old) => entry);
             }
-
-            var entry = new CacheEntry
-            {
-                Metadata = metadata,
-                Timestamp = DateTime.UtcNow,
-                Expiration = _defaultExpiration
-            };
-
-            _cache.AddOrUpdate(key, entry, (k, old) => entry);
 
             Infrastructure.Logger.Instance.Info($"Schema cached for key: {key}");
         }
