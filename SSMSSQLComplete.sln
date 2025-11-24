@@ -1,0 +1,41 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSMSSQLComplete", "src\SSMSSQLComplete\SSMSSQLComplete.csproj", "{8C9E5A5B-2E3D-4F1A-9B8C-1D5E6F7A8B9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSMSSQLComplete.Core", "src\SSMSSQLComplete.Core\SSMSSQLComplete.Core.csproj", "{2F8A6B3C-4D5E-6F7A-8B9C-0D1E2F3A4B5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSMSSQLComplete.Tests", "tests\SSMSSQLComplete.Tests\SSMSSQLComplete.Tests.csproj", "{3D7A5B4C-2E1F-5A6B-7C8D-9E0F1A2B3C4D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1A2B3C4D-5E6F-7A8B-9C0D-1E2F3A4B5C6D}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C9E5A5B-2E3D-4F1A-9B8C-1D5E6F7A8B9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C9E5A5B-2E3D-4F1A-9B8C-1D5E6F7A8B9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C9E5A5B-2E3D-4F1A-9B8C-1D5E6F7A8B9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C9E5A5B-2E3D-4F1A-9B8C-1D5E6F7A8B9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F8A6B3C-4D5E-6F7A-8B9C-0D1E2F3A4B5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F8A6B3C-4D5E-6F7A-8B9C-0D1E2F3A4B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F8A6B3C-4D5E-6F7A-8B9C-0D1E2F3A4B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F8A6B3C-4D5E-6F7A-8B9C-0D1E2F3A4B5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D7A5B4C-2E1F-5A6B-7C8D-9E0F1A2B3C4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D7A5B4C-2E1F-5A6B-7C8D-9E0F1A2B3C4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D7A5B4C-2E1F-5A6B-7C8D-9E0F1A2B3C4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D7A5B4C-2E1F-5A6B-7C8D-9E0F1A2B3C4D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
