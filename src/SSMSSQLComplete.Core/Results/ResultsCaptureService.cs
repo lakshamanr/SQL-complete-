@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using SSMSSQLComplete.Core.Infrastructure;
 
 namespace SSMSSQLComplete.Core.Results
@@ -112,7 +113,7 @@ namespace SSMSSQLComplete.Core.Results
             {
                 try
                 {
-                    Newtonsoft.Json.Linq.JToken.Parse(text);
+                    JToken.Parse(text);
                     return true;
                 }
                 catch
