@@ -90,10 +90,10 @@ namespace SSMSSQLComplete.Package
                     }
 
                     Core.Infrastructure.Logger.Instance.Info($"License status: {license.GetDisplayStatus()}");
-                    Core.Infrastructure.TelemetryService.Instance.TrackEvent("LicenseChecked", new
+                    Core.Infrastructure.TelemetryService.Instance.TrackEvent("LicenseChecked", new System.Collections.Generic.Dictionary<string, string>
                     {
-                        LicenseType = license.Type.ToString(),
-                        IsValid = license.IsValid()
+                        { "LicenseType", license.Type.ToString() },
+                        { "IsValid", license.IsValid().ToString() }
                     });
                 }
                 catch (Exception ex)

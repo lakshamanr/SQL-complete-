@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Win32;
@@ -97,10 +98,10 @@ namespace SSMSSQLComplete.Core.Licensing
                     _currentLicense = licenseInfo;
 
                     Infrastructure.Logger.Instance.Info($"License activated successfully: {licenseInfo.Type}");
-                    Infrastructure.TelemetryService.Instance.TrackEvent("LicenseActivated", new
+                    Infrastructure.TelemetryService.Instance.TrackEvent("LicenseActivated", new System.Collections.Generic.Dictionary<string, string>
                     {
-                        LicenseType = licenseInfo.Type.ToString(),
-                        HasExpiration = licenseInfo.ExpirationDate.HasValue
+                        { "LicenseType", licenseInfo.Type.ToString() },
+                        { "HasExpiration", licenseInfo.ExpirationDate.HasValue.ToString() }
                     });
 
                     return ActivationResult.Success(licenseInfo);

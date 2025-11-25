@@ -115,7 +115,10 @@ namespace SSMSSQLComplete.Core.Licensing
                     byte[] dataBytes = Encoding.UTF8.GetBytes(data);
                     byte[] signatureBytes = ConvertFromBase32(signature);
 
-                    return rsa.VerifyData(dataBytes, SHA256.Create(), signatureBytes);
+                    using (var sha256 = SHA256.Create())
+                    {
+                        return rsa.VerifyData(dataBytes, sha256, signatureBytes);
+                    }
                 }
             }
             catch
