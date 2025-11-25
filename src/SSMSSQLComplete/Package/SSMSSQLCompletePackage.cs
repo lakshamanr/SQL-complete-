@@ -30,9 +30,14 @@ namespace SSMSSQLComplete.Package
             await ManageSnippetsCommand.InitializeAsync(this);
             await ToggleCompletionCommand.InitializeAsync(this);
             await ShowResultsViewerCommand.InitializeAsync(this);
+            await ActivateLicenseCommand.InitializeAsync(this);
+            await AboutCommand.InitializeAsync(this);
 
             // Initialize services
             await InitializeServicesAsync();
+
+            // Check license status
+            await CheckLicenseAsync();
         }
 
         private async Task InitializeServicesAsync()
@@ -49,6 +54,75 @@ namespace SSMSSQLComplete.Package
                 // Initialize logger
                 var logger = Core.Infrastructure.Logger.Instance;
                 logger.Info("SSMS SQL Complete package initialized successfully");
+            });
+        }
+
+        private async Task CheckLicenseAsync()
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    var license = Core.Licensing.LicenseManager.Instance.GetCurrentLicense();
+
+                    if (license.Type == Core.Licensing.LicenseType.Unlicensed)
+                    {
+                        // No license, start trial if not already started
+                        var trialInfo = Core.Licensing.TrialManager.Instance.GetTrialInfo();
+                        if (!trialInfo.IsTrialStarted)
+                        {
+                            Core.Licensing.TrialManager.Instance.StartTrial();
+                            Core.Infrastructure.Logger.Instance.Info("Trial period started automatically");
+                        }
+                    }
+                    else if (license.Type == Core.Licensing.LicenseType.Trial)
+                    {
+                        var trialInfo = Core.Licensing.TrialManager.Instance.GetTrialInfo();
+                        if (trialInfo.IsExpired)
+                        {
+                            Core.Infrastructure.Logger.Instance.Warn("Trial period has expired");
+                            ShowTrialExpiredNotification();
+                        }
+                        else if (trialInfo.DaysRemaining <= 7)
+                        {
+                            Core.Infrastructure.Logger.Instance.Info($"Trial expiring in {trialInfo.DaysRemaining} days");
+                        }
+                    }
+
+                    Core.Infrastructure.Logger.Instance.Info($"License status: {license.GetDisplayStatus()}");
+                    Core.Infrastructure.TelemetryService.Instance.TrackEvent("LicenseChecked", new
+                    {
+                        LicenseType = license.Type.ToString(),
+                        IsValid = license.IsValid()
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Core.Infrastructure.Logger.Instance.Error($"Error checking license: {ex.Message}", ex);
+                }
+            });
+        }
+
+        private void ShowTrialExpiredNotification()
+        {
+            ThreadHelper.JoinableTaskFactory.Run(async () =>
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                var result = Microsoft.VisualStudio.Shell.VsShellUtilities.ShowMessageBox(
+                    this,
+                    "Your trial period for SSMS SQL Complete has expired.\n\n" +
+                    "Would you like to activate a license now?",
+                    "Trial Expired",
+                    Microsoft.VisualStudio.Shell.Interop.OLEMSGICON.OLEMSGICON_WARNING,
+                    Microsoft.VisualStudio.Shell.Interop.OLEMSGBUTTON.OLEMSGBUTTON_YESNO,
+                    Microsoft.VisualStudio.Shell.Interop.OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+
+                if (result == 6) // IDYES
+                {
+                    var dialog = new UI.Dialogs.LicenseActivationDialog();
+                    dialog.ShowDialog();
+                }
             });
         }
 

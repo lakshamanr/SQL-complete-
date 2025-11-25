@@ -46,6 +46,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Commands\AboutCommand.cs" />
+    <Compile Include="Commands\ActivateLicenseCommand.cs" />
     <Compile Include="Commands\FormatDocumentCommand.cs" />
     <Compile Include="Commands\FormatSelectionCommand.cs" />
     <Compile Include="Commands\ManageSnippetsCommand.cs" />
@@ -80,6 +82,15 @@
     <Compile Include="UI\Dialogs\ResultsViewerDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UI\Dialogs\LicenseActivationDialog.xaml.cs">
+      <DependentUpon>LicenseActivationDialog.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="UI\Dialogs\LicenseActivationDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="source.extension.vsixmanifest">
@@ -87,12 +98,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.0.32112.339" ExcludeAssets="runtime" />

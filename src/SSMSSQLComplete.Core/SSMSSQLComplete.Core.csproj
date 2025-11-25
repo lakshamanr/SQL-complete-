@@ -61,6 +61,10 @@
     <Compile Include="Infrastructure\Logger.cs" />
     <Compile Include="Infrastructure\PerformanceMonitor.cs" />
     <Compile Include="Infrastructure\TelemetryService.cs" />
+    <Compile Include="Licensing\LicenseInfo.cs" />
+    <Compile Include="Licensing\LicenseManager.cs" />
+    <Compile Include="Licensing\LicenseValidator.cs" />
+    <Compile Include="Licensing\TrialManager.cs" />
     <Compile Include="Parsing\SqlContext.cs" />
     <Compile Include="Parsing\SqlContextAnalyzer.cs" />
     <Compile Include="Parsing\SqlToken.cs" />
