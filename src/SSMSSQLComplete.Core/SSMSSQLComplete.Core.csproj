@@ -34,6 +34,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -61,9 +62,13 @@
     <Compile Include="Infrastructure\Logger.cs" />
     <Compile Include="Infrastructure\PerformanceMonitor.cs" />
     <Compile Include="Infrastructure\TelemetryService.cs" />
+    <Compile Include="Licensing\HardwareFingerprint.cs" />
+    <Compile Include="Licensing\LicenseBinding.cs" />
+    <Compile Include="Licensing\LicenseConsumption.cs" />
     <Compile Include="Licensing\LicenseInfo.cs" />
     <Compile Include="Licensing\LicenseManager.cs" />
     <Compile Include="Licensing\LicenseValidator.cs" />
+    <Compile Include="Licensing\TamperDetection.cs" />
     <Compile Include="Licensing\TrialManager.cs" />
     <Compile Include="Parsing\SqlContext.cs" />
     <Compile Include="Parsing\SqlContextAnalyzer.cs" />

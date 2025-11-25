@@ -35,8 +35,42 @@ namespace SSMSSQLComplete.Core.Licensing
         {
             lock (_lock)
             {
+                // Perform tamper detection
+                var tamperResult = TamperDetection.Instance.DetectTampering();
+                if (tamperResult.IsTampered)
+                {
+                    Infrastructure.Logger.Instance.Error($"License tampered: {tamperResult.TamperType}");
+                    return new LicenseInfo
+                    {
+                        Type = LicenseType.Unlicensed,
+                        Status = LicenseStatus.Invalid,
+                        LicensedTo = "Tampered"
+                    };
+                }
+
+                // Record usage
+                LicenseConsumption.Instance.RecordUsage();
+
                 if (_currentLicense != null && _currentLicense.IsValid())
+                {
+                    // Validate hardware binding
+                    if (!string.IsNullOrEmpty(_currentLicense.MachineId))
+                    {
+                        var currentHardware = HardwareFingerprint.Instance.Generate();
+                        if (!string.Equals(_currentLicense.MachineId, currentHardware, StringComparison.OrdinalIgnoreCase))
+                        {
+                            Infrastructure.Logger.Instance.Warn("Hardware mismatch detected");
+                            return new LicenseInfo
+                            {
+                                Type = LicenseType.Unlicensed,
+                                Status = LicenseStatus.Invalid,
+                                LicensedTo = "Hardware Mismatch"
+                            };
+                        }
+                    }
+
                     return _currentLicense;
+                }
 
                 // Check for trial
                 var trialInfo = TrialManager.Instance.GetTrialInfo();
@@ -73,8 +107,18 @@ namespace SSMSSQLComplete.Core.Licensing
             {
                 try
                 {
+                    // Check for abuse patterns
+                    if (LicenseConsumption.Instance.DetectAbusePattern())
+                    {
+                        Infrastructure.Logger.Instance.Warn("Suspicious activation pattern detected");
+                        return ActivationResult.Failure("Too many activation attempts. Please contact support.");
+                    }
+
+                    // Extract base license key if hardware-bound
+                    var baseLicenseKey = LicenseBinding.ExtractBaseLicenseKey(licenseKey);
+
                     // Validate the license key
-                    var validationResult = _validator.ValidateLicenseKey(licenseKey);
+                    var validationResult = _validator.ValidateLicenseKey(baseLicenseKey);
 
                     if (!validationResult.IsValid)
                     {
@@ -82,12 +126,25 @@ namespace SSMSSQLComplete.Core.Licensing
                         return ActivationResult.Failure(validationResult.ErrorMessage);
                     }
 
+                    // Get hardware fingerprint
+                    var hardwareFingerprint = HardwareFingerprint.Instance.Generate();
+
+                    // If license is hardware-bound, validate binding
+                    if (LicenseBinding.IsBound(licenseKey))
+                    {
+                        if (!LicenseBinding.ValidateBinding(licenseKey, hardwareFingerprint))
+                        {
+                            Infrastructure.Logger.Instance.Warn("Hardware binding validation failed");
+                            return ActivationResult.Failure("This license key is bound to different hardware. Please contact support for a transfer.");
+                        }
+                    }
+
                     var licenseInfo = validationResult.LicenseInfo;
                     licenseInfo.LicenseKey = licenseKey;
                     licenseInfo.LicensedTo = licensedTo ?? "Licensed User";
                     licenseInfo.CompanyName = companyName;
                     licenseInfo.ActivationDate = DateTime.UtcNow;
-                    licenseInfo.MachineId = GetMachineId();
+                    licenseInfo.MachineId = hardwareFingerprint;
 
                     // Store license
                     if (!StoreLicense(licenseInfo))
@@ -97,11 +154,21 @@ namespace SSMSSQLComplete.Core.Licensing
 
                     _currentLicense = licenseInfo;
 
+                    // Record activation
+                    LicenseConsumption.Instance.RecordActivation();
+
+                    // Update tamper detection checksum
+                    TamperDetection.Instance.UpdateChecksum(
+                        licenseKey,
+                        licenseInfo.ActivationDate?.ToString("O"),
+                        hardwareFingerprint);
+
                     Infrastructure.Logger.Instance.Info($"License activated successfully: {licenseInfo.Type}");
                     Infrastructure.TelemetryService.Instance.TrackEvent("LicenseActivated", new System.Collections.Generic.Dictionary<string, string>
                     {
                         { "LicenseType", licenseInfo.Type.ToString() },
-                        { "HasExpiration", licenseInfo.ExpirationDate.HasValue.ToString() }
+                        { "HasExpiration", licenseInfo.ExpirationDate.HasValue.ToString() },
+                        { "HardwareBound", LicenseBinding.IsBound(licenseKey).ToString() }
                     });
 
                     return ActivationResult.Success(licenseInfo);
@@ -120,6 +187,9 @@ namespace SSMSSQLComplete.Core.Licensing
             {
                 try
                 {
+                    // Record deactivation
+                    LicenseConsumption.Instance.RecordDeactivation();
+
                     using (var key = Registry.CurrentUser.OpenSubKey(REGISTRY_KEY, true))
                     {
                         key?.DeleteValue(LICENSE_KEY_VALUE, false);
@@ -151,7 +221,21 @@ namespace SSMSSQLComplete.Core.Licensing
                     if (string.IsNullOrEmpty(licenseKey))
                         return;
 
-                    var validationResult = _validator.ValidateLicenseKey(licenseKey);
+                    // Extract base license key if hardware-bound
+                    var baseLicenseKey = LicenseBinding.ExtractBaseLicenseKey(licenseKey);
+
+                    // Validate hardware binding if present
+                    var currentHardware = HardwareFingerprint.Instance.Generate();
+                    if (LicenseBinding.IsBound(licenseKey))
+                    {
+                        if (!LicenseBinding.ValidateBinding(licenseKey, currentHardware))
+                        {
+                            Infrastructure.Logger.Instance.Warn("Stored license has invalid hardware binding");
+                            return;
+                        }
+                    }
+
+                    var validationResult = _validator.ValidateLicenseKey(baseLicenseKey);
                     if (validationResult.IsValid)
                     {
                         var licenseInfo = validationResult.LicenseInfo;
@@ -163,7 +247,7 @@ namespace SSMSSQLComplete.Core.Licensing
                             licenseInfo.ActivationDate = activationDate;
                         }
 
-                        licenseInfo.MachineId = GetMachineId();
+                        licenseInfo.MachineId = currentHardware;
 
                         _currentLicense = licenseInfo;
 
@@ -206,26 +290,17 @@ namespace SSMSSQLComplete.Core.Licensing
 
         private string GetMachineId()
         {
-            try
-            {
-                // Generate machine-specific ID based on hardware characteristics
-                var machineInfo = $"{Environment.MachineName}|{Environment.ProcessorCount}|{Environment.OSVersion}";
-
-                using (var sha256 = SHA256.Create())
-                {
-                    var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(machineInfo));
-                    return BitConverter.ToString(hash).Replace("-", "").Substring(0, 16);
-                }
-            }
-            catch
-            {
-                return "UNKNOWN";
-            }
+            return HardwareFingerprint.Instance.Generate();
         }
 
         public string GetMachineIdForActivation()
         {
-            return GetMachineId();
+            return HardwareFingerprint.Instance.Generate();
+        }
+
+        public string GetShortMachineId()
+        {
+            return HardwareFingerprint.Instance.GetShortId();
         }
     }
 
